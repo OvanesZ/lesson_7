@@ -95,20 +95,20 @@ class OnlineStore {
     var coinsDeposit = 0
     var promoCod = 2000
     
-    func buy(itemNamed name: String) -> (Product?, OnlineStoreError?) {
-            //если такого товара нет то возвращаем nil и ошибку
+    func buy(itemNamed name: String) throws -> Product {
+            //если такого товара нет то возвращаем ошибку
             guard let item = inventory[name] else {
-                return (nil, OnlineStoreError.invalidSelection)
+                throw OnlineStoreError.invalidSelection
             }
     
-            // если товар закончился возвращаем nil и ошибку
+            // если товар закончился возвращаем ошибку
             guard item.count > 0 else {
-                return (nil, OnlineStoreError.outOfStock)
+                throw OnlineStoreError.outOfStock
             }
     
-            // если есть скидка то нельзя применить промокод и возвращаем nil и ошибку
+            // если есть скидка то нельзя применить промокод и возвращаем ошибку
             guard item.sale == false else {
-                return (nil, OnlineStoreError.invalidPromoCod)
+                throw OnlineStoreError.invalidPromoCod
             }
         
         // продаем товар
@@ -118,17 +118,48 @@ class OnlineStore {
                 inventory[name] = newItem
                 print("продан \(name)")
                 print("осталось \(item.count - 1) \(name)")
-                return (newItem.product, nil)
+                return newItem.product
     }
 }
 
 
 let onlineShop = OnlineStore()
-onlineShop.buy(itemNamed: "Iphone Xs")
-onlineShop.buy(itemNamed: "Iphone Xs")
-onlineShop.buy(itemNamed: "Iphone Xs")
-onlineShop.buy(itemNamed: "Iphone Xs")
-onlineShop.buy(itemNamed: "Iphone Xs")
-onlineShop.buy(itemNamed: "Iphone Xs")
-onlineShop.buy(itemNamed: "Iphone 7 plus")
-onlineShop.buy(itemNamed: "Nokia")
+
+do {
+    let buy1 = try onlineShop.buy(itemNamed: "Iphone Xs")
+} catch OnlineStoreError.invalidSelection {
+    print("такого товара не существует")
+} catch OnlineStoreError.outOfStock {
+    print("товар закончился")
+} catch OnlineStoreError.invalidPromoCod {
+print("нельзя применить промокод")
+} catch let error {
+    print(error.localizedDescription)
+}
+
+
+let buy2 = try? onlineShop.buy(itemNamed: "Iphone Xs")
+
+
+do {
+    let buy3 = try onlineShop.buy(itemNamed: "Nokia")
+} catch OnlineStoreError.invalidSelection {
+    print("такого товара не существует")
+} catch OnlineStoreError.outOfStock {
+    print("товар закончился")
+} catch OnlineStoreError.invalidPromoCod {
+print("нельзя применить промокод")
+} catch let error {
+    print(error.localizedDescription)
+}
+
+let buy4 = try? onlineShop.buy(itemNamed: "Nokia")
+
+//onlineShop.buy(itemNamed: "Iphone Xs")
+//onlineShop.buy(itemNamed: "Iphone Xs")
+//onlineShop.buy(itemNamed: "Iphone Xs")
+//onlineShop.buy(itemNamed: "Iphone Xs")
+//onlineShop.buy(itemNamed: "Iphone Xs")
+//onlineShop.buy(itemNamed: "Iphone Xs")
+//onlineShop.buy(itemNamed: "Iphone 7 plus")
+//onlineShop.buy(itemNamed: "Nokia")
